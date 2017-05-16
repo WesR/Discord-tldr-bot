@@ -17,6 +17,7 @@ async def on_message(message):
         await client.send_message(message.channel, "Im reading, give me a second")
         #TODO: Sanitize this
         #TODO: Write own html scraper
+        print("Parsing: " + message.content)
         article = Article(message.content)
         article.download()
         article.parse()
