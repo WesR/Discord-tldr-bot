@@ -4,3 +4,4 @@ This is my first serious python program, so please excuses the weird formatting 
 # Useage
 Currently it only responds to a message starting with the link. This will be improved (and sanitized!)
 To add the server I am developing to your server use this link: [retracted for security]
+![](https://github.com/WesR/Discord-tldr-bot/blob/master/example.PNG?raw=true "Visual")
