@@ -2,6 +2,8 @@ print("Loading imports")
 import discord
 #import nltk
 import configparser
+import datetime
+import logging
 from pyteaser import Summarize
 from newspaper import Article
 
@@ -39,7 +41,7 @@ async def on_message(message):
             blacklistFile.close()
             blacklist.append(blacklistURL)#Write to ram
             await client.send_message(message.channel, blacklistURL + " has now been blacklisted")#feedback
-            print(blacklistURL + " has now been blacklisted by " + message.author.name + " " + message.author.id)
+            logInfo(blacklistURL + " has now been blacklisted by " + message.author.name + " " + message.author.id)
 
         elif command[0:len('show')] == 'show':
             await client.send_message(message.channel, "show")
@@ -74,27 +76,25 @@ async def on_ready():
     '''
     #I need a way to update everything
     if config.get("update","nltk") == "true":
-        print("Updating nltk")
+        logInfo("Updating nltk")
         #nltk.
-        print("nltk updated")
+        logInfo("nltk updated")
     '''
-    print()
-    print("Logged in as ", end=""),
-    print(client.user.name)
-    print("ID: ", end=""),
-    print(client.user.id)
-    print('------------')
+    logInfo()
+    logInfo("Logged in as " + client.user.name)
+    logInfo("ID: " + client.user.id)
+    logInfo('------------')
 
 
 def blacklisted(url = 'wesring.com'):
     rootUrl = url[(url.find("://")+3):url.find("/",url.find("://")+3)]#Find whats inbetween :// and the next /
     rootUrl = rootUrl[rootUrl.rfind(".", 0, rootUrl.rfind("."))+1:len(rootUrl)]#removes the subdomains
     
-    #print("Root: " + rootUrl)
-    #print("Blacklist " + str(blacklist)) 
+    #logInfo("Root: " + rootUrl)
+    #logInfo("Blacklist " + str(blacklist)) 
     for i in range(0,len(blacklist)):#check to see if its in the blacklist
         if blacklist[i].rstrip() == rootUrl:
-            print("Blacklisted URL ignored: " + rootUrl)#url match
+            logInfo("Blacklisted URL ignored: " + rootUrl)#url match
             return True
     return False#url is not blacklisted
 
@@ -102,7 +102,7 @@ async def shorten(message, url = 'wesring.com'):#I am the error page
     await client.send_message(message.channel, "Im reading, give me a second")
     #TODO: Sanitize this
     #TODO: Write own html scraper
-    print("Parsing: " + url)
+    logInfo("Parsing: " + url)
     article = Article(url)
     article.download()
     article.parse()
@@ -110,12 +110,22 @@ async def shorten(message, url = 'wesring.com'):#I am the error page
     #TODO: Write own summary function
     summary = "".join(Summarize(article.title, article.text))
     await client.send_message(message.channel, "\n\nSummary:\n " + summary)
-    print("done")
+    logInfo("done")
+
+def logInfo(message = ""):#So we log to console and disk
+    logging.info(message)
+    print(message)
 
 print("Loading config")
-blacklistFile = open("blacklist", "r+")
+blacklistFile = open("blacklist", "r")#Open blacklist
 blacklist = blacklistFile.readlines()
-blacklistFile.close()
-config = configparser.ConfigParser()
+blacklistFile.close()#Close the blacklist
+config = configparser.ConfigParser()#Load config
 config.read("bot.config")
+logging.basicConfig(filename="runninglog" + str(datetime.datetime.now()).replace(' ','').replace(':','-') + ".log", level=logging.INFO)
+logging.info("Bot start: " + str(datetime.datetime.now()))
+rawConfig = open("bot.config", "r")#Opening the config just to get the raw config file
+logging.info("Config:" + str(rawConfig.readlines()))#Writing the config to log
+rawConfig.close()
+logging.info("Blacklist: " + str(blacklist) + "\n")
 client.run(config.get("bot","token"))

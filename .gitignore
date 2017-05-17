@@ -3,6 +3,7 @@
 
 # User-specific files
 *.config
+*.log
 *.suo
 *.user
 *.userosscache
