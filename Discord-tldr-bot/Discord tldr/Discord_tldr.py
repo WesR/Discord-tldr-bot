@@ -40,8 +40,19 @@ async def on_message(message):
             blacklist.append(blacklistURL)#Write to ram
             await client.send_message(message.channel, blacklistURL + " has now been blacklisted")#feedback
             print(blacklistURL + " has now been blacklisted by " + message.author.name + " " + message.author.id)
+
         elif command[0:len('show')] == 'show':
             await client.send_message(message.channel, "show")
+
+        elif command[0:len('shorten')] == 'shorten':
+            if 'http://' in message.content:#If its http, use use that url, else https
+                url = message.content[message.content.find('http://'):len(message.content)].split(' ')[0]
+            else:
+                url = message.content[message.content.find('https://'):len(message.content)].split(' ')[0]
+            await shorten(message, url)#shorten the link
+
+        elif command[0:len('help')] == 'help':
+            await client.send_message(message.channel, "use @" + client.user.name + " to use a command\nblacklist <url> to blacklist a site\nshow <config> or <blacklist> to show the lists\nshorten <url> ro force shorten a url")
         else:
             await client.send_message(message.channel, "Whats up?")
         return
@@ -80,7 +91,7 @@ def blacklisted(url = 'wesring.com'):
     rootUrl = rootUrl[rootUrl.rfind(".", 0, rootUrl.rfind("."))+1:len(rootUrl)]#removes the subdomains
     
     #print("Root: " + rootUrl)
-    print("Blacklist " + str(blacklist)) 
+    #print("Blacklist " + str(blacklist)) 
     for i in range(0,len(blacklist)):#check to see if its in the blacklist
         if blacklist[i].rstrip() == rootUrl:
             print("Blacklisted URL ignored: " + rootUrl)#url match
