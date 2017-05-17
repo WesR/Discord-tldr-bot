@@ -30,6 +30,7 @@
     <InterpreterReference Include="{ef9b03d3-fce8-4654-91da-850b4f5f527b}\3.5" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="blacklist" />
     <Content Include="bot.config" />
   </ItemGroup>
   <PropertyGroup>
