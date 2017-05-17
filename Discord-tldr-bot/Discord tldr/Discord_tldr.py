@@ -8,6 +8,23 @@ from newspaper import Article
 config = configparser.ConfigParser()
 client = discord.Client()
 
+'''
+    -Add a blacklist
+        amazon.com
+        youtube.com
+        giphy.com
+        imgur.com
+    -@botname blacklist whatever.com
+    -write my own scraper
+        Reddit support
+        If under certin length, do not post
+    -Add contains() support
+    -Output cleaning
+        soundcloud
+        reddit support
+
+'''
+
 @client.event
 async def on_message(message):
     
@@ -17,14 +34,16 @@ async def on_message(message):
         await client.send_message(message.channel, "Im reading, give me a second")
         #TODO: Sanitize this
         #TODO: Write own html scraper
-        print("Parsing: " + message.content)
-        article = Article(message.content)
+        print("Parsing: " + message.content.split(' ')[0])
+        article = Article(message.content.split(' ')[0])
         article.download()
         article.parse()
 
         #TODO: Write own summary function
         summary = "".join(Summarize(article.title, article.text))
         await client.send_message(message.channel, "\n\nSummary:\n " + summary)
+
+   # if message.content.
 
 @client.event
 async def on_ready():
