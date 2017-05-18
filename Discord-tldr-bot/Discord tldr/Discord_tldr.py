@@ -4,19 +4,19 @@ import discord
 import configparser
 import datetime
 import logging
+#import markovify
 from pyteaser import Summarize
 from newspaper import Article
 
 client = discord.Client()
 
 '''
+    -admin creds for users
     -autogenerate config file
     -fix webpage exploit
-    -@botname blacklist whatever.com
     -write my own scraper
         Reddit support
         If under certin length, do not post
-    -Add contains() support
     -Output cleaning
         soundcloud
         reddit support
@@ -100,7 +100,6 @@ def blacklisted(url = 'wesring.com'):
 
 async def shorten(message, url = 'wesring.com'):#I am the error page
     await client.send_message(message.channel, "Im reading, give me a second")
-    #TODO: Sanitize this
     #TODO: Write own html scraper
     logInfo("Parsing: " + url)
     article = Article(url)
@@ -111,6 +110,27 @@ async def shorten(message, url = 'wesring.com'):#I am the error page
     summary = "".join(Summarize(article.title, article.text))
     await client.send_message(message.channel, "\n\nSummary:\n " + summary)
     logInfo("done")
+
+'''
+This just makes a markov chain of words. It works best with big texts
+
+async def markov(message, url = 'wesring.com'):
+    await client.send_message(message.channel, "Im reading, give me a second")
+    await client.send_message(message.channel, "Note: I am using marcov chains")
+    #TODO: Write own html scraper
+    logInfo("Parsing: " + url)
+    article = Article(url)
+    article.download()
+    article.parse()
+
+    #TODO: Write own summary function
+    summary = ""
+    text_model = markovify.Text(article.text)
+    for i in range(0,5):
+        summary += str(text_model.make_sentence())
+    await client.send_message(message.channel, "\n\nSummary:\n " + summary)
+    logInfo("done")
+'''
 
 def logInfo(message = ""):#So we log to console and disk
     logging.info(message)
